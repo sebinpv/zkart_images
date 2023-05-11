@@ -164,7 +164,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
 
     const activationToken = createActivationToken(user);
 
-    const activationUrl = `http://localhost:3000/activation/${activationToken}`;
+    const activationUrl = `https://zkart-nvxw.vercel.app/activation/${activationToken}`;
 
     try {
       await sendMail({
@@ -536,7 +536,7 @@ router.post("/forgot-password", async (req, res, next) => {
       };
       const resetToken = createPasswordResetToken(user);
 
-      const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+      const resetUrl = `https://zkart-nvxw.vercel.app/reset-password/${resetToken}`;
 
 
       try {
