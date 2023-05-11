@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "zkart-nvxw-sebinpv.vercel.app",
+    origin: "https://zkart-nvxw.vercel.app/",
     credentials: true,
   })
 );
