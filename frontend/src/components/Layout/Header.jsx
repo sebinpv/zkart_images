@@ -172,7 +172,7 @@ const Header = ({ activeHeading }) => {
                     )}
                   </div>
                   {isAuthenticated ? (
-                      <p className="mb-0 text-white">Welcome<br/>{user.name}</p>
+                      <p className="mb-0 text-white">Welcome<br/>{user?.name}</p>
                     ) : (
                       <Link  style={{textDecoration: 'none'}} to="/login">
                         <p className="mb-0 text-white">Login</p>
