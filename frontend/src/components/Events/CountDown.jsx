@@ -10,10 +10,10 @@ const CountDown = ({data}) => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
     if (
-      typeof timeLeft.days === 'undefined' &&
-      typeof timeLeft.hours === 'undefined' &&
-      typeof timeLeft.minutes === 'undefined' &&
-      typeof timeLeft.seconds === 'undefined'
+      timeLeft.days === 0 &&
+      timeLeft.hours === 0 &&
+      timeLeft.minutes === 0 &&
+      timeLeft.seconds === 0
     ) {
       axios.delete(`${server}/event/delete-shop-event/${data?._id}`);
     }
