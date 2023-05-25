@@ -604,5 +604,205 @@ router.put(
   })
 );
 
+// add to cart
+router.put(
+  "/addToCart",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+
+      const cart = user.cart;
+      let existsProd = false;
+      let id=0;
+
+      for(let i=0; i< cart.length; i++){
+        let ele = cart[i];
+        if(String(ele.product) === req.body.product){
+          existsProd = true;
+          id = i;
+          break;
+        }
+      };
+
+      if (existsProd) {
+        cart[id].qty += 1;
+      } else {
+        user.cart.push(req.body);
+      }
+
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// cart update
+router.put(
+  "/updateCart",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+      const cart = user.cart;
+
+      let id=0;
+
+      for(let i=0; i< cart.length; i++){
+        let ele = cart[i];
+        if(String(ele._id) === req.body.id){
+          id = i;
+          break;
+        }
+      };
+
+      if (req.body.type === "inc") {
+        cart[id].qty += 1;
+      } else if (req.body.type === "dec") {
+        cart[id].qty -= 1;
+      }
+
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        cart,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// remove from cart
+router.put(
+  "/removeFromCart",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const userId = req.user._id;
+      const pId = req.body.id;
+
+      await User.updateOne(
+        {
+          _id: userId,
+        },
+        { $pull: { cart: { _id: pId } } }
+      );
+
+      const user = await User.findById(userId);
+      const cart = user.cart;
+
+      res.status(200).json({ success: true, cart });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// get cart
+router.get(
+  "/get-cart",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const cart = await User.findById(req.user._id).populate("cart.product");
+
+      res.status(201).json({
+        success: true,
+        cart,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+
+// add to wishlist
+router.put(
+  "/addToWishlist",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+
+      const wishlist = user.wishlist;
+      let existsProd = false;
+      let id=0;
+
+      for(let i=0; i< wishlist.length; i++){
+        let ele = wishlist[i];
+        if(String(ele.product) === req.body.product){
+          existsProd = true;
+          break;
+        }
+      };
+
+      if (!existsProd) {
+        user.wishlist.push(req.body);
+      }
+
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// remove from wishlist
+router.put(
+  "/removeFromWishlist",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const userId = req.user._id;
+      const pId = req.body.id;console.log(pId);
+
+      await User.updateOne(
+        {
+          _id: userId,
+        },
+        { $pull: { wishlist: { product: pId } } }
+      );
+
+      const user = await User.findById(userId);
+      const wishlist = user.wishlist;
+
+      res.status(200).json({ success: true, wishlist });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// get wishlist
+router.get(
+  "/get-wishlist",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const wishlist = await User.findById(req.user._id).populate("wishlist.product");
+
+      res.status(201).json({
+        success: true,
+        wishlist,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+
 
 module.exports = router;
